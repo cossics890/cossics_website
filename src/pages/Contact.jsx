@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMapPin, FiPhoneCall, FiMail, FiClock, FiSend, FiCheckCircle } from 'react-icons/fi';
+import { FiMapPin, FiPhoneCall, FiMail, FiClock, FiSend, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import PageTransition from '../components/PageTransition.jsx';
 import { company } from '../data/company.js';
 
@@ -25,17 +25,45 @@ export default function Contact() {
     return e;
   };
 
-  const onSubmit = (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
     if (Object.keys(e).length) return;
+
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      setStatus('error');
+      return;
+    }
+
     setStatus('sending');
-    setTimeout(() => {
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `New COSSICS enquiry from ${form.name}`,
+          from_name: 'COSSICS Website',
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          message: form.message.trim(),
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Unable to send your message.');
+      }
+
       setStatus('sent');
       setForm(empty);
-      setTimeout(() => setStatus('idle'), 4000);
-    }, 1200);
+    } catch (error) {
+      console.error('Web3Forms submission failed:', error);
+      setStatus('error');
+    }
   };
 
   const info = [
@@ -96,6 +124,16 @@ export default function Contact() {
                   exit={{ opacity: 0 }}
                 >
                   <FiCheckCircle /> Thank you! We will get back to you shortly.
+                </motion.div>
+              )}
+              {status === 'error' && (
+                <motion.div
+                  className="form-error"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <FiAlertCircle /> Message could not be sent. Please try again or contact us directly.
                 </motion.div>
               )}
             </AnimatePresence>

@@ -562,6 +562,7 @@ h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; line-height: 1.15; letter-sp
 }
 .spinner { width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(10, 22, 51, 0.25); border-top-color: var(--navy); animation: spin 0.8s linear infinite; }
 .form-success { margin-top: 18px; display: flex; align-items: center; gap: 10px; background: #e9f9ef; color: #15803d; padding: 14px 18px; border-radius: 12px; font-weight: 500; }
+.form-error { margin-top: 18px; display: flex; align-items: center; gap: 10px; background: #fef2f2; color: #b91c1c; padding: 14px 18px; border-radius: 12px; font-weight: 500; }
 .contact-info { display: grid; gap: 16px; }
 .info-card { display: flex; gap: 16px; align-items: flex-start; background: var(--navy); color: #fff; border-radius: 18px; padding: 20px 22px; box-shadow: var(--shadow); }
 .info-card:nth-child(odd) { background: linear-gradient(135deg, var(--navy), var(--navy-2)); }
