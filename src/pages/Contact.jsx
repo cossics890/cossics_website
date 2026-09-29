@@ -36,7 +36,6 @@ export default function Contact() {
       setStatus('error');
       return;
     }
-
     setStatus('sending');
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
